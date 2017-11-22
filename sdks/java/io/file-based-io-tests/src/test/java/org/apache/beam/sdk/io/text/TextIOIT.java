@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+
+import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.FileSystems;
 import org.apache.beam.sdk.io.GenerateSequence;
 import org.apache.beam.sdk.io.TextIO;
@@ -80,12 +82,58 @@ public class TextIOIT {
     IOTestPipelineOptions options = TestPipeline.testingPipelineOptions()
         .as(IOTestPipelineOptions.class);
 
+    System.out.println("setup");
+    System.out.println(options.getRunner());
+    System.out.println(options.getNumberOfRecords());
+    System.out.println("/setup");
+
     numberOfTextLines = options.getNumberOfRecords();
     filenamePrefix = appendTimestamp(options.getFilenamePrefix());
   }
 
   private static String appendTimestamp(String filenamePrefix) {
     return String.format("%s_%s", filenamePrefix, new Date().getTime());
+  }
+
+  public static void main(String[] args) throws Exception {
+    System.out.println("Command-line arguments:");
+    for (String arg : args) {
+      System.out.println(arg);
+    }
+    IOTestPipelineOptions options = PipelineOptionsFactory
+            .fromArgs(args)
+            .withValidation()
+            .as(IOTestPipelineOptions.class);
+
+    System.out.println("main");
+    System.out.println(options.getRunner());
+    System.out.println(options.getNumberOfRecords());
+    System.out.println("/main");
+    numberOfTextLines = options.getNumberOfRecords();
+    filenamePrefix = appendTimestamp(options.getFilenamePrefix());
+
+    Pipeline pipeline = TestPipeline.create(options);
+    writeThenReadAllFromMainMethod(pipeline);
+  }
+
+  public static void writeThenReadAllFromMainMethod(Pipeline pipeline) {
+    PCollection<String> testFilenames = pipeline
+      .apply("Generate sequence", GenerateSequence.from(0).to(numberOfTextLines))
+      .apply("Produce text lines", ParDo.of(new DeterministicallyConstructTestTextLineFn()))
+      .apply("Write content to files", TextIO.write().to(filenamePrefix).withOutputFilenames())
+      .getPerDestinationOutputFilenames().apply(Values.<String>create());
+
+    PCollection<String> consolidatedHashcode = testFilenames
+      .apply("Read all files", TextIO.readAll())
+      .apply("Calculate hashcode", Combine.globally(new HashingFn()));
+
+    String expectedHash = getExpectedHashForLineCount(numberOfTextLines);
+    PAssert.thatSingleton(consolidatedHashcode).isEqualTo(expectedHash);
+
+    testFilenames.apply("Delete test files", ParDo.of(new DeleteFileFn())
+            .withSideInputs(consolidatedHashcode.apply(View.<String>asSingleton())));
+
+    pipeline.run().waitUntilFinish();
   }
 
   @Test
