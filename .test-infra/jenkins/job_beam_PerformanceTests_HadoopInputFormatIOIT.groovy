@@ -53,6 +53,7 @@ job('beam_PerformanceTests_HadoopInputFormatIO_IT') {
     def pipelineArgsJoined = "[" + pipelineArgList.join(',') + "]"
 
     def argMap = [
+            kubeconfig: '/var/lib/jenkins/.kube/config',
             benchmarks: 'beam_integration_benchmark',
             beam_it_profile: 'io-it',
             beam_prebuilt: 'true',
@@ -60,10 +61,13 @@ job('beam_PerformanceTests_HadoopInputFormatIO_IT') {
             beam_it_module: 'sdks/java/io/hadoop/input-format',
             beam_it_class: "org.apache.beam.sdk.io.hadoop.inputformat.HadoopInputFormatIOIT",
             beam_it_options: pipelineArgsJoined,
-            kubeconfig: '/var/lib/jenkins/.kube/config',
-            beam_kubernetes_scripts: '"$WORKSPACE/src/.test-infra/kubernetes/postgres/postgres.yml,$WORKSPACE/src/.test-infra/kubernetes/postgres/postgres-service-for-local-dev.yml"',
-            beam_options_config_file: '"$WORKSPACE/src/.test-infra/kubernetes/postgres/pkb-config-local.yml"'
+            beam_kubernetes_scripts: makePathAbsolute('.test-infra/kubernetes/postgres/postgres.yml'),
+            beam_options_config_file: makePathAbsolute('.test-infra/kubernetes/postgres/pkb-config.yml')
     ]
 
     common_job_properties.buildPerformanceTest(delegate, argMap)
+}
+
+static def makePathAbsolute(String path) {
+    return '"$WORKSPACE/src/' + path + '"'
 }
