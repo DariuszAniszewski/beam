@@ -43,7 +43,7 @@ job('beam_PerformanceTests_FileBasedIO_IT') {
     def pipelineArgs = [
             project: 'apache-beam-io-testing',
             tempRoot: 'gs://apache-beam-io-testing',
-            numberOfRecords: '1000000',
+            numberOfRecords: '100000',
             filenamePrefix: 'gs://apache-beam-io-testing/filebased/${BUILD_ID}/TESTIOIT',
     ]
     def pipelineArgList = []
