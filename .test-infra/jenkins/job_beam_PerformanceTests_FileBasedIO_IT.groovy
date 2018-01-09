@@ -19,15 +19,39 @@
 import common_job_properties
 
 def testsParams = [
-        ['org.apache.beam.sdk.io.text.TextIOIT', 'beam_PerformanceTests_TextIOIT', 'beam_performance.textioit_pkb_results'],
-        ['org.apache.beam.sdk.io.avro.AvroIOIT', 'beam_PerformanceTests_AvroIOIT', 'beam_performance.avroioit_pkb_results'],
-        ['org.apache.beam.sdk.io.tfrecord.TFRecordIOIT', 'beam_PerformanceTests_TFRecordIOIT', 'beam_performance.tfrecordioit_pkb_results'],
+        [
+                'org.apache.beam.sdk.io.text.TextIOIT',
+                'beam_PerformanceTests_TextIOIT',
+                'beam_performance.textioit_pkb_results',
+                null
+        ],
+        [
+                'org.apache.beam.sdk.io.text.TextIOIT',
+                'beam_PerformanceTests_TextIOIT_Compressed',
+                'beam_performance.textioit_compressed_pkb_results',
+                [
+                        compressionType: 'GZIP'
+                ]
+        ],
+        [
+                'org.apache.beam.sdk.io.avro.AvroIOIT',
+                'beam_PerformanceTests_AvroIOIT',
+                'beam_performance.avroioit_pkb_results',
+                null
+        ],
+        [
+                'org.apache.beam.sdk.io.tfrecord.TFRecordIOIT',
+                'beam_PerformanceTests_TFRecordIOIT',
+                'beam_performance.tfrecordioit_pkb_results',
+                null
+        ],
 ]
 
 for (testParam in testsParams){
     def itClass = testParam[0]
     def jobName = testParam[1]
     def bqTable = testParam[2]
+    def extraPipelineArgs = testParam[3]
 
     // This job runs the file-based IOs performance tests on PerfKit Benchmarker.
     job(jobName) {
@@ -57,6 +81,10 @@ for (testParam in testsParams){
                 numberOfRecords: '100000',
                 filenamePrefix: 'gs://apache-beam-io-testing/filebased/${BUILD_ID}/TESTIOIT',
         ]
+        if (extraPipelineArgs){
+            pipelineArgs << extraPipelineArgs
+        }
+
         def pipelineArgList = []
         pipelineArgs.each({
             key, value -> pipelineArgList.add("\"--$key=$value\"")
