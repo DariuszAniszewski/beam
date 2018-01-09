@@ -60,8 +60,8 @@ job('beam_PerformanceTests_HadoopInputFormatIO_IT') {
             beam_it_module: 'sdks/java/io/hadoop/input-format',
             beam_it_class: "org.apache.beam.sdk.io.hadoop.inputformat.HadoopInputFormatIOIT",
             beam_it_options: pipelineArgsJoined,
-            beam_kubernetes_scripts: '"beam/.test-infra/kubernetes/postgres/postgres.yml, beam/.test-infra/kubernetes/postgres/postgres-service-for-local-dev.yml"',
-            beam_options_config_file: '"beam/.test-infra/kubernetes/postgres/pkb-config-local.yml"'
+            beam_kubernetes_scripts: '"$WORKSPACE/src/beam/.test-infra/kubernetes/postgres/postgres.yml, $WORKSPACE/src/beam/.test-infra/kubernetes/postgres/postgres-service-for-local-dev.yml"',
+            beam_options_config_file: '"$WORKSPACE/src/beam/.test-infra/kubernetes/postgres/pkb-config-local.yml"'
     ]
 
     common_job_properties.buildPerformanceTest(delegate, argMap)
