@@ -61,7 +61,7 @@ job('beam_PerformanceTests_HadoopInputFormatIO_IT') {
             beam_it_class: "org.apache.beam.sdk.io.hadoop.inputformat.HadoopInputFormatIOIT",
             beam_it_options: pipelineArgsJoined,
             beam_kubernetes_scripts: '".test-infra/kubernetes/postgres/postgres.yml, .test-infra/kubernetes/postgres/postgres-service-for-local-dev.yml"',
-            beam_options_config_file: '.test-infra/kubernetes/postgres/pkb-config-local.yml'
+            beam_options_config_file: '".test-infra/kubernetes/postgres/pkb-config-local.yml"'
     ]
 
     common_job_properties.buildPerformanceTest(delegate, argMap)
