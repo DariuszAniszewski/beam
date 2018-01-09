@@ -29,13 +29,12 @@ class common_job_properties {
       git {
         remote {
           // Double quotes here mean ${repositoryName} is interpolated.
-          github("apache/${repositoryName}")
+          github("DariuszAniszewski/${repositoryName}")
           // Single quotes here mean that ${ghprbPullId} is not interpolated and instead passed
           // through to Jenkins where it refers to the environment variable.
-          refspec('+refs/heads/*:refs/remotes/origin/* ' +
-                  '+refs/pull/${ghprbPullId}/*:refs/remotes/origin/pr/${ghprbPullId}/*')
+          refspec('+refs/heads/*:refs/remotes/origin/*')
         }
-        branch('${sha1}')
+        branch('jenkins')
         extensions {
           cleanAfterCheckout()
           relativeTargetDirectory(checkoutDir)
@@ -46,12 +45,12 @@ class common_job_properties {
 
   // Sets common top-level job properties for website repository jobs.
   static void setTopLevelWebsiteJobProperties(def context,
-                                              String branch = 'asf-site') {
+                                              String branch = 'DA_asf-site') {
     setTopLevelJobProperties(
             context,
-            'beam-site',
+            'DA_beam-site',
             branch,
-            'beam',
+            'DA_beam',
             30)
   }
 
@@ -78,14 +77,14 @@ class common_job_properties {
 
     // GitHub project.
     context.properties {
-      githubProjectUrl('https://github.com/apache/' + repositoryName + '/')
+      githubProjectUrl('https://github.com/DariuszAniszewski/' + repositoryName + '/')
     }
 
     // Set JDK version.
     context.jdk('JDK 1.8 (latest)')
-
-    // Restrict this project to run only on Jenkins executors as specified
-    context.label(jenkinsExecutorLabel)
+// TODO: uncomment
+//    // Restrict this project to run only on Jenkins executors as specified
+//    context.label(jenkinsExecutorLabel)
 
     // Discard old builds. Build records are only kept up to this number of days.
     context.logRotator {
@@ -95,14 +94,15 @@ class common_job_properties {
     // Source code management.
     setSCM(context, repositoryName)
 
-    context.parameters {
-      // This is a recommended setup if you want to run the job manually. The
-      // ${sha1} parameter needs to be provided, and defaults to the main branch.
-      stringParam(
-          'sha1',
-          defaultBranch,
-          'Commit id or refname (eg: origin/pr/9/head) you want to build.')
-    }
+// TODO: uncomment
+//    context.parameters {
+//      // This is a recommended setup if you want to run the job manually. The
+//      // ${sha1} parameter needs to be provided, and defaults to the main branch.
+//      stringParam(
+//          'sha1',
+//          defaultBranch,
+//          'Commit id or refname (eg: origin/pr/9/head) you want to build.')
+//    }
 
     context.wrappers {
       // Abort the build if it's stuck for more minutes than specified.
@@ -115,9 +115,11 @@ class common_job_properties {
       environmentVariables {
         env('SPARK_LOCAL_IP', '127.0.0.1')
       }
-      credentialsBinding {
-        string("COVERALLS_REPO_TOKEN", "beam-coveralls-token")
-      }
+
+// TODO: uncomment
+//      credentialsBinding {
+//        string("COVERALLS_REPO_TOKEN", "beam-coveralls-token")
+//      }
     }
   }
 
@@ -130,10 +132,10 @@ class common_job_properties {
                                                  String successComment = '--none--') {
     context.triggers {
       githubPullRequest {
-        admins(['asfbot'])
+//        admins(['asfbot'])
         useGitHubHooks()
-        orgWhitelist(['apache'])
-        allowMembersOfWhitelistedOrgsAsAdmin()
+//        orgWhitelist(['apache'])
+//        allowMembersOfWhitelistedOrgsAsAdmin()
         permitAll()
         // prTriggerPhrase is the argument which gets set when we want to allow
         // post-commit builds to run against pending pull requests. This block
@@ -201,18 +203,18 @@ class common_job_properties {
                                                     String commitStatusName,
                                                     String prTriggerPhrase) {
     setPullRequestBuildTrigger(
-      context,
-      commitStatusName,
-      prTriggerPhrase,
-      true,
-      '--none--')
+            context,
+            commitStatusName,
+            prTriggerPhrase,
+            true,
+            '--none--')
   }
 
   // Sets common config for PostCommit jobs.
   static void setPostCommit(context,
                             String buildSchedule = '0 */6 * * *',
                             boolean triggerEveryPush = true,
-                            String notifyAddress = 'commits@beam.apache.org',
+                            String notifyAddress = 'dariusz.aniszewski@polidea.com',
                             boolean emailIndividuals = true) {
     // Set build triggers
     context.triggers {
@@ -242,12 +244,12 @@ class common_job_properties {
   // performance test job arguments.
   private static def genPerformanceArgs(def argMap) {
     LinkedHashMap<String, String> standardArgs = [
-      project: 'apache-beam-testing',
-      dpb_log_level: 'INFO',
-      maven_binary: '/home/jenkins/tools/maven/latest/bin/mvn',
-      bigquery_table: 'beam_performance.pkb_results',
-      // Publishes results with official tag, for use in dashboards.
-      official: 'true'
+            project: 'apache-beam-io-testing',
+            dpb_log_level: 'INFO',
+            maven_binary: '/usr/bin/mvn',
+//      bigquery_table: 'beam_performance.pkb_results',
+            // Publishes results with official tag, for use in dashboards.
+            official: 'false'
     ]
     // Note: in case of key collision, keys present in ArgMap win.
     LinkedHashMap<String, String> joinedArgs = standardArgs.plus(argMap)
@@ -258,16 +260,16 @@ class common_job_properties {
   static def buildPerformanceTest(def context, def argMap) {
     def pkbArgs = genPerformanceArgs(argMap)
     context.steps {
-        // Clean up environment.
-        shell('rm -rf PerfKitBenchmarker')
-        // Clone appropriate perfkit branch
-        shell('git clone https://github.com/GoogleCloudPlatform/PerfKitBenchmarker.git')
-        // Install Perfkit benchmark requirements.
-        shell('pip install --user -r PerfKitBenchmarker/requirements.txt')
-        // Install job requirements for Python SDK.
-        shell('pip install --user -e ' + common_job_properties.checkoutDir + '/sdks/python/[gcp,test]')
-        // Launch performance test.
-        shell("python PerfKitBenchmarker/pkb.py $pkbArgs")
+      // Clean up environment.
+      shell('rm -rf PerfKitBenchmarker')
+      // Clone appropriate perfkit branch
+      shell('git clone -b verbose https://github.com/DariuszAniszewski/PerfKitBenchmarker.git')
+      // Install Perfkit benchmark requirements.
+      shell('pip install --user -r PerfKitBenchmarker/requirements.txt')
+      // Install job requirements for Python SDK.
+      shell('pip install --user -e ' + common_job_properties.checkoutDir + '/sdks/python/[gcp,test]')
+      // Launch performance test.
+      shell("python PerfKitBenchmarker/pkb.py $pkbArgs")
     }
   }
 
@@ -337,7 +339,7 @@ class common_job_properties {
    */
   static def setPipelineBuildJobProperties(def context) {
     context.properties {
-      githubProjectUrl('https://github.com/apache/beam/')
+      githubProjectUrl('https://github.com/DariuszAniszewski/beam/')
     }
 
     context.parameters {
