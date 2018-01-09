@@ -20,42 +20,48 @@ import common_job_properties
 
 def testsParams = [
         [
-                'org.apache.beam.sdk.io.text.TextIOIT',
-                'beam_PerformanceTests_TextIOIT',
-                'beam_performance.textioit_pkb_results',
-                null
+                'beam_PerformanceTests_TextIOIT', // job name
+                'Runs PerfKit tests for TextIOIT', // job description
+                'org.apache.beam.sdk.io.text.TextIOIT', // it class
+                'beam_performance.textioit_pkb_results', // BigQuery table for results
+                null // extra Pipeline properties
         ],
         [
+
+                'beam_PerformanceTests_Compressed_TextIOIT',
+                'Runs PerfKit tests for TextIOIT with GZIP compression',
                 'org.apache.beam.sdk.io.text.TextIOIT',
-                'beam_PerformanceTests_TextIOIT_Compressed',
-                'beam_performance.textioit_compressed_pkb_results',
+                'beam_performance.compressed_textioit_pkb_results',
                 [
                         compressionType: 'GZIP'
                 ]
         ],
         [
-                'org.apache.beam.sdk.io.avro.AvroIOIT',
                 'beam_PerformanceTests_AvroIOIT',
+                'Runs PerfKit tests for AvroIOIT',
+                'org.apache.beam.sdk.io.avro.AvroIOIT',
                 'beam_performance.avroioit_pkb_results',
                 null
         ],
         [
-                'org.apache.beam.sdk.io.tfrecord.TFRecordIOIT',
                 'beam_PerformanceTests_TFRecordIOIT',
+                'Runs PerfKit tests for beam_PerformanceTests_TFRecordIOIT',
+                'org.apache.beam.sdk.io.tfrecord.TFRecordIOIT',
                 'beam_performance.tfrecordioit_pkb_results',
                 null
         ],
 ]
 
 for (testParam in testsParams){
-    def itClass = testParam[0]
-    def jobName = testParam[1]
-    def bqTable = testParam[2]
-    def extraPipelineArgs = testParam[3]
+    def jobName = testParam[0]
+    def jobDescription = testParam[1]
+    def itClass = testParam[2]
+    def bqTable = testParam[3]
+    def extraPipelineArgs = testParam[4]
 
     // This job runs the file-based IOs performance tests on PerfKit Benchmarker.
     job(jobName) {
-        description("Runs PerfKit tests for ${itClass}")
+        description(jobDescription)
 
         // Set default Beam job properties.
         common_job_properties.setTopLevelMainJobProperties(delegate)
