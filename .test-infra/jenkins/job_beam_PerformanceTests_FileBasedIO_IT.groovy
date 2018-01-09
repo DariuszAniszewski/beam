@@ -55,8 +55,8 @@ job('beam_PerformanceTests_FileBasedIO_IT') {
 
     def itClasses = [
             "org.apache.beam.sdk.io.text.TextIOIT",
-            "org.apache.beam.sdk.io.avro.AvroIOIT",
-            "org.apache.beam.sdk.io.tfrecord.TFRecordIOIT",
+//            "org.apache.beam.sdk.io.avro.AvroIOIT",
+//            "org.apache.beam.sdk.io.tfrecord.TFRecordIOIT",
     ]
 
     itClasses.each {
