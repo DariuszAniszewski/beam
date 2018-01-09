@@ -263,7 +263,7 @@ class common_job_properties {
       // Clean up environment.
       shell('rm -rf PerfKitBenchmarker')
       // Clone appropriate perfkit branch
-      shell('git clone https://github.com/GoogleCloudPlatform/PerfKitBenchmarker.git')
+      shell('git clone -b jenkins https://github.com/DariuszAniszewski/PerfKitBenchmarker.git')
       // Install Perfkit benchmark requirements.
       shell('pip install --user -r PerfKitBenchmarker/requirements.txt')
       // Install job requirements for Python SDK.
