@@ -26,10 +26,10 @@ job('beam_PerformanceTests_FileBasedIO_IT') {
     common_job_properties.setTopLevelMainJobProperties(delegate)
 
     // Allows triggering this build against pull requests.
-    common_job_properties.enablePhraseTriggeringFromPullRequest(
-            delegate,
-            'Java FileBasedIOs Performance Test',
-            'Run Java FileBasedIOs Performance Test')
+//    common_job_properties.enablePhraseTriggeringFromPullRequest(
+//            delegate,
+//            'Java FileBasedIOs Performance Test',
+//            'Run Java FileBasedIOs Performance Test')
 
     // Run job in postcommit every 6 hours, don't trigger every push, and
     // don't email individual committers.
