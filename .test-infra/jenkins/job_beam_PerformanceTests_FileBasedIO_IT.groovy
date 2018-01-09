@@ -33,18 +33,18 @@ job('beam_PerformanceTests_FileBasedIO_IT') {
 
     // Run job in postcommit every 6 hours, don't trigger every push, and
     // don't email individual committers.
-    common_job_properties.setPostCommit(
-            delegate,
-            '0 */6 * * *',
-            false,
-            'commits@beam.apache.org',
-            false)
+//    common_job_properties.setPostCommit(
+//            delegate,
+//            '0 */6 * * *',
+//            false,
+//            'commits@beam.apache.org',
+//            false)
 
     def pipelineArgs = [
-            project: 'apache-beam-testing',
-            tempRoot: 'gs://temp-storage-for-perf-tests',
+            project: 'apache-beam-io-testing',
+            tempRoot: 'gs://apache-beam-io-testing',
             numberOfRecords: '1000000',
-            filenamePrefix: 'gs://temp-storage-for-perf-tests/filebased/${BUILD_ID}/TESTIOIT',
+            filenamePrefix: 'gs://apache-beam-io-testing/filebased/${BUILD_ID}/TESTIOIT',
     ]
     def pipelineArgList = []
     pipelineArgs.each({
