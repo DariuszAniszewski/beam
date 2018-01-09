@@ -52,13 +52,6 @@ job('beam_PerformanceTests_HadoopInputFormatIO_IT') {
     })
     def pipelineArgsJoined = "[" + pipelineArgList.join(',') + "]"
 
-    def kubernetesScripts = [
-            '/.test-infra/kubernetes/postgres/postgres.yml',
-            '/.test-infra/kubernetes/postgres/postgres-service-for-local-dev.yml'
-    ]
-
-    def kubernetesConfig = ['/.test-infra/kubernetes/postgres/pkb-config-local.yml']
-
     def argMap = [
             benchmarks: 'beam_integration_benchmark',
             beam_it_profile: 'io-it',
@@ -67,17 +60,9 @@ job('beam_PerformanceTests_HadoopInputFormatIO_IT') {
             beam_it_module: 'sdks/java/io/hadoop/input-format',
             beam_it_class: "org.apache.beam.sdk.io.hadoop.inputformat.HadoopInputFormatIOIT",
             beam_it_options: pipelineArgsJoined,
-            beam_kubernetes_scripts: makePathsAbsolute(kubernetesScripts),
-            beam_options_config_file: makePathsAbsolute(kubernetesConfig)
+            beam_kubernetes_scripts: '.test-infra/kubernetes/postgres/postgres.yml, .test-infra/kubernetes/postgres/postgres-service-for-local-dev.yml',
+            beam_options_config_file: '.test-infra/kubernetes/postgres/pkb-config-local.yml'
     ]
 
     common_job_properties.buildPerformanceTest(delegate, argMap)
-}
-
-static def makePathsAbsolute(List<String> relativePaths) {
-    def toreturn = relativePaths.collect {
-        path -> $BEAM_ROOT + path
-    }
-    println (toreturn)
-    return toreturn
 }
