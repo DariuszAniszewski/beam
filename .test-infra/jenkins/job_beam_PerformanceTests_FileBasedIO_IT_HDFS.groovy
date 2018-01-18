@@ -113,6 +113,10 @@ private void create_filebasedio_performance_test_job(testConfiguration) {
                 beam_it_options          : pipelineArgsJoined,
                 beam_extra_mvn_properties: '["filesystem=hdfs"]',
                 bigquery_table           : testConfiguration.bqTable,
+                beam_options_config_file : 'src/.test-infra/kubernetes/hadoop/SmallITCluster/pkb-config.yml',
+                beam_kubernetes_scripts  : 'src/.test-infra/kubernetes/hadoop/SmallITCluster/hdfs-single-datanode-cluster.yml,.src/.test-infra/kubernetes/hadoop/SmallITCluster/hdfs-single-datanode-cluster-for-local-dev.yml',
+
+
         ]
         common_job_properties.buildPerformanceTest(delegate, argMap)
     }

@@ -1,0 +1,70 @@
+#    Licensed to the Apache Software Foundation (ASF) under one or more
+#    contributor license agreements.  See the NOTICE file distributed with
+#    this work for additional information regarding copyright ownership.
+#    The ASF licenses this file to You under the Apache License, Version 2.0
+#    (the "License"); you may not use this file except in compliance with
+#    the License.  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hive
+  labels:
+    name: hive
+spec:
+  ports:
+    - port: 9083
+  selector:
+    name: hive
+  type: NodePort
+
+---
+
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: hive
+spec:
+  replicas: 1
+  selector:
+    name: hive
+  template:
+    metadata:
+      name: hive
+      labels:
+        name: hive
+    spec:
+      containers:
+        - name: hive
+          image: teradatalabs/cdh5-hive
+          ports:
+            - containerPort: 1004
+            - containerPort: 1006
+            - containerPort: 8020
+            - containerPort: 50010
+            - containerPort: 50020
+            - containerPort: 50070
+            - containerPort: 50075
+            - containerPort: 50470
+            - containerPort: 8030
+            - containerPort: 8031
+            - containerPort: 8032
+            - containerPort: 8033
+            - containerPort: 8040
+            - containerPort: 8041
+            - containerPort: 8042
+            - containerPort: 8088
+            - containerPort: 10020
+            - containerPort: 19888
+            - containerPort: 9083
+            - containerPort: 10000
+            - containerPort: 1180
