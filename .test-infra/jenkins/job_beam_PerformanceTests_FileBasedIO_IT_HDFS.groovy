@@ -29,13 +29,13 @@ def testsConfigurations = [
 
         ],
         [
-                jobName            : 'beam_PerformanceTests_Compressed_TextIOIT_HDFS',
-                jobDescription     : 'Runs PerfKit tests for TextIOIT with GZIP compression on HDFS',
-                itClass            : 'org.apache.beam.sdk.io.text.TextIOIT',
-                bqTable            : 'beam_performance.compressed_textioit_hdfs_pkb_results',
-                prCommitStatusName : 'Java CompressedTextIO Performance Test on HDFS',
-                prTriggerPhase     : 'Run Java CompressedTextIO Performance Test HDFS',
-                extraPipelineArgs: [
+                jobName           : 'beam_PerformanceTests_Compressed_TextIOIT_HDFS',
+                jobDescription    : 'Runs PerfKit tests for TextIOIT with GZIP compression on HDFS',
+                itClass           : 'org.apache.beam.sdk.io.text.TextIOIT',
+                bqTable           : 'beam_performance.compressed_textioit_hdfs_pkb_results',
+                prCommitStatusName: 'Java CompressedTextIO Performance Test on HDFS',
+                prTriggerPhase    : 'Run Java CompressedTextIO Performance Test HDFS',
+                extraPipelineArgs : [
                         compressionType: 'GZIP'
                 ]
         ],
@@ -103,6 +103,7 @@ private void create_filebasedio_performance_test_job(testConfiguration) {
         def pipelineArgsJoined = "[" + pipelineArgList.join(',') + "]"
 
         def argMap = [
+                kubeconfig               : '/var/lib/jenkins/.kube/config',
                 benchmarks               : 'beam_integration_benchmark',
                 beam_it_timeout          : '1200',
                 beam_it_profile          : 'io-it',
