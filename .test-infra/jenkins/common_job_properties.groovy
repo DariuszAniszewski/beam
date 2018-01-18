@@ -34,7 +34,7 @@ class common_job_properties {
           // through to Jenkins where it refers to the environment variable.
           refspec('+refs/heads/*:refs/remotes/origin/*')
         }
-        branch('hdfs-perfkit')
+        branch('hdfs-perkit')
         extensions {
           cleanAfterCheckout()
           relativeTargetDirectory(checkoutDir)
