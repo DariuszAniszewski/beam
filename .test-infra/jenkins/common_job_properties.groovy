@@ -29,12 +29,12 @@ class common_job_properties {
       git {
         remote {
           // Double quotes here mean ${repositoryName} is interpolated.
-          github("DariuszAniszewski/${repositoryName}")
+          github("szewi/${repositoryName}")
           // Single quotes here mean that ${ghprbPullId} is not interpolated and instead passed
           // through to Jenkins where it refers to the environment variable.
           refspec('+refs/heads/*:refs/remotes/origin/*')
         }
-        branch('jenkins')
+        branch('hdfs-perfkit')
         extensions {
           cleanAfterCheckout()
           relativeTargetDirectory(checkoutDir)
@@ -77,7 +77,7 @@ class common_job_properties {
 
     // GitHub project.
     context.properties {
-      githubProjectUrl('https://github.com/DariuszAniszewski/' + repositoryName + '/')
+      githubProjectUrl('https://github.com/szewi/' + repositoryName + '/')
     }
 
     // Set JDK version.
