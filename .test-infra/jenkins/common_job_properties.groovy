@@ -29,12 +29,12 @@ class common_job_properties {
       git {
         remote {
           // Double quotes here mean ${repositoryName} is interpolated.
-          github("szewi/${repositoryName}")
+          github("lgajowy/${repositoryName}")
           // Single quotes here mean that ${ghprbPullId} is not interpolated and instead passed
           // through to Jenkins where it refers to the environment variable.
           refspec('+refs/heads/*:refs/remotes/origin/*')
         }
-        branch('hdfs-perkit')
+        branch('enable-jdbc-io-it')
         extensions {
           cleanAfterCheckout()
           relativeTargetDirectory(checkoutDir)
@@ -77,7 +77,7 @@ class common_job_properties {
 
     // GitHub project.
     context.properties {
-      githubProjectUrl('https://github.com/szewi/' + repositoryName + '/')
+      githubProjectUrl('https://github.com/lgajowy/' + repositoryName + '/')
     }
 
     // Set JDK version.
@@ -263,7 +263,7 @@ class common_job_properties {
       // Clean up environment.
       shell('rm -rf PerfKitBenchmarker')
       // Clone appropriate perfkit branch
-      shell('git clone -b jenkins https://github.com/DariuszAniszewski/PerfKitBenchmarker.git')
+      shell('git clone -b kube https://github.com/DariuszAniszewski/PerfKitBenchmarker.git')
       // Install Perfkit benchmark requirements.
       shell('pip install --user -r PerfKitBenchmarker/requirements.txt')
       // Install job requirements for Python SDK.
