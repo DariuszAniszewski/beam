@@ -25,7 +25,7 @@ job('beam_PerformanceTests_JDBC'){
 
     def pipelineArgs = [
             tempRoot: 'gs://apache-beam-io-testing',
-            project: 'apache-beam-testing',
+            project: 'apache-beam-io-testing',
             postgresPort: '5432',
             numberOfRecords: '5000000'
     ]
