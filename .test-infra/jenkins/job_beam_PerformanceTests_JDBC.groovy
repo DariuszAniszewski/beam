@@ -51,7 +51,6 @@ job('beam_PerformanceTests_JDBC'){
             bigquery_table: 'beam_performance.JdbcIOIT_pkb_results',
             container_cluster_cloud: 'GCP',
             machine_type: 'n1-standard-1',
-            zone: 'us-central1-a',
             cloud: 'GCP',
     ]
 
