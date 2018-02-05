@@ -23,41 +23,37 @@ job('beam_PerformanceTests_JDBC'){
     // Set default Beam job properties.
     common_job_properties.setTopLevelMainJobProperties(delegate)
 
-    // Run job in postcommit every 6 hours, don't trigger every push, and
-    // don't email individual committers.
-    common_job_properties.setPostCommit(
-        delegate,
-        '0 */6 * * *',
-        false,
-        'commits@beam.apache.org',
-        false)
-
     def pipelineArgs = [
-        tempRoot: 'gs://temp-storage-for-end-to-end-tests',
-        project: 'apache-beam-testing',
-        postgresServerName: '10.36.0.11',
-        postgresUsername: 'postgres',
-        postgresDatabaseName: 'postgres',
-        postgresPassword: 'uuinkks',
-        postgresSsl: 'false'
+            tempRoot: 'gs://apache-beam-io-testing',
+            project: 'apache-beam-testing',
+            postgresPort: '5432',
+            numberOfRecords: '5000000'
     ]
+
     def pipelineArgList = []
     pipelineArgs.each({
-        key, value -> pipelineArgList.add("--$key=$value")
+        key, value -> pipelineArgList.add("\"--$key=$value\"")
     })
-    def pipelineArgsJoined = pipelineArgList.join(',')
+    def pipelineArgsJoined = "[" + pipelineArgList.join(',') + "]"
 
     def argMap = [
-      benchmarks: 'beam_integration_benchmark',
-      beam_it_module: 'sdks/java/io/jdbc',
-      beam_it_args: pipelineArgsJoined,
-      beam_it_class: 'org.apache.beam.sdk.io.jdbc.JdbcIOIT',
-      // Profile is located in $BEAM_ROOT/sdks/java/io/pom.xml.
-      beam_it_profile: 'io-it'
+            beam_it_timeout: '1200',
+            benchmarks: 'beam_integration_benchmark',
+            beam_it_profile: 'io-it',
+            beam_prebuilt: 'true',
+            beam_sdk: 'java',
+            beam_it_module: 'sdks/java/io/jdbc',
+            beam_it_class: 'org.apache.beam.sdk.io.jdbc.JdbcIOIT',
+            beam_it_options: pipelineArgsJoined,
+            beam_kubernetes_scripts: makePathAbsolute('.test-infra/kubernetes/postgres/postgres.yml')
+                    + ',' + makePathAbsolute('.test-infra/kubernetes/postgres/postgres-service-for-local-dev.yml'),
+            beam_options_config_file: makePathAbsolute('.test-infra/kubernetes/postgres/pkb-config-local.yml'),
+            bigquery_table: 'beam_performance.JdbcIOIT_pkb_results'
     ]
 
     common_job_properties.buildPerformanceTest(delegate, argMap)
+}
 
-    // [BEAM-2141] Perf tests do not pass.
-    disabled()
+static def makePathAbsolute(String path) {
+    return '"$WORKSPACE/' + path + '"'
 }
