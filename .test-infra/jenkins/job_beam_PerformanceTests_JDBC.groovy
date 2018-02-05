@@ -49,7 +49,10 @@ job('beam_PerformanceTests_JDBC'){
                     + ',' + makePathAbsolute('.test-infra/kubernetes/postgres/postgres-service-for-local-dev.yml'),
             beam_options_config_file: makePathAbsolute('.test-infra/kubernetes/postgres/pkb-config-local.yml'),
             bigquery_table: 'beam_performance.JdbcIOIT_pkb_results',
-            container_cluster_cloud: 'GKE',
+            container_cluster_cloud: 'GCP',
+            machine_type: 'n1-standard-1',
+            zone: 'us-central1-a',
+            cloud: 'GCP',
     ]
 
     common_job_properties.buildPerformanceTest(delegate, argMap)
