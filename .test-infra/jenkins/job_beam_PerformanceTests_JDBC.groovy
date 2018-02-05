@@ -56,5 +56,5 @@ job('beam_PerformanceTests_JDBC'){
 }
 
 static def makePathAbsolute(String path) {
-    return '"$WORKSPACE/' + path + '"'
+    return '"$WORKSPACE/src' + path + '"'
 }
