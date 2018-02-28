@@ -25,17 +25,17 @@ job('beam_PerformanceTests_JDBC') {
 
     // Run job in postcommit every 6 hours, don't trigger every push, and
     // don't email individual committers.
-    common_job_properties.setPostCommit(
-            delegate,
-            '0 */6 * * *',
-            false,
-            'commits@beam.apache.org',
-            false)
+//    common_job_properties.setPostCommit(
+//            delegate,
+//            '0 */6 * * *',
+//            false,
+//            'commits@beam.apache.org',
+//            false)
 
-    common_job_properties.enablePhraseTriggeringFromPullRequest(
-            delegate,
-            'Java JdbcIO Performance Test',
-            'Run Java JdbcIO Performance Test')
+//    common_job_properties.enablePhraseTriggeringFromPullRequest(
+//            delegate,
+//            'Java JdbcIO Performance Test',
+//            'Run Java JdbcIO Performance Test')
 
     def pipelineArgs = [
             tempRoot       : 'gs://temp-storage-for-perf-tests',
